@@ -2,7 +2,7 @@
 
 this is a simple actix-web powered api with a diesel backend to allow for storage for timed roblox bans or any other sort of punishment type
 
-you can find current endpoints [here](ENDPOINTS.md) alongside the current [database schema](DATABASE.md)
+you can find current [endpoints](ENDPOINTS.md) alongside the current [database schema](DATABASE.md)
 
 ## Running Locally
 
