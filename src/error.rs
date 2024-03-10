@@ -1,5 +1,4 @@
-
-use actix_web::{HttpResponse, http::StatusCode, ResponseError};
+use actix_web::{http::StatusCode, HttpResponse, ResponseError};
 use diesel::result::Error;
 use serde::Serialize;
 
@@ -10,7 +9,7 @@ pub enum CustomError {
     //Duplication,
     Validation,
     NotFound,
-    DbError
+    DbError,
 }
 
 #[derive(Serialize)]
@@ -18,19 +17,19 @@ pub struct ErrorResponse {
     pub message: String,
 }
 
-// impl CustomError {
-//     pub fn name(&self) -> String {
-//         match self {
-//             Self::ValidationError => "Validation Fail".to_string(),
-//             Self::NotFound => "Not found".to_string(),
-//             Self::DbError => "Database Error".to_string(),
-//         }
-//     }
-// }
-
 impl std::fmt::Display for CustomError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)
+    }
+}
+
+impl CustomError {
+    pub fn name(&self) -> String {
+        match self {
+            Self::Validation => "Validation fail".to_string(),
+            Self::NotFound => "Not found within database".to_string(),
+            Self::DbError => "Database error".to_string(),
+        }
     }
 }
 
@@ -40,18 +39,19 @@ impl ResponseError for CustomError {
             //Self::Duplication => StatusCode::BAD_REQUEST,
             Self::Validation => StatusCode::BAD_REQUEST,
             Self::NotFound => StatusCode::NOT_FOUND,
-            Self::DbError => StatusCode::INTERNAL_SERVER_ERROR
+            Self::DbError => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
     fn error_response(&self) -> HttpResponse {
         HttpResponse::build(self.status_code()).json(ErrorResponse {
-            message: self.to_string(),
+            message: self.name(),
         })
     }
 }
 
-impl From<Error> for CustomError { // working on
+impl From<Error> for CustomError {
+    // working on
     fn from(e: Error) -> Self {
         match e {
             Error::NotFound => CustomError::NotFound,

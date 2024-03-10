@@ -129,8 +129,6 @@ async fn get_punishments(
     }
 }
 
-// curl -d '{"roblox_id": 3, "reason":"smdsfsdells", "username":"unknodsdfsdwn", "unbanned_at"}' -H "Content-type: application/json" -X POST http://localhost:8080/Punish
-
 #[get("/Punishment/{userId}")]
 async fn get_punishment(
     pool: web::Data<Pool<ConnectionManager<SqliteConnection>>>,

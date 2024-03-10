@@ -35,7 +35,7 @@ example responses:
 
 ```json
 {
-  "message": "NotFound"
+  "message": "Not found within database"
 }
 ```
 
