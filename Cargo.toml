@@ -1,0 +1,17 @@
+[package]
+name = "punishment-api"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4.4.1"
+diesel = { version = "2.0.3", features = ["sqlite", "r2d2", "chrono"] }
+dotenvy = "0.15.7"
+serde = { version = "1.0.195", features = ["derive"] }
+env_logger = "0.11.3"
+log = "0.4.20"
+dotenv = "0.15.0"
+chrono = { version = "0.4.31", features = ["serde"] }
+actix-web-lab = "0.20.1"
