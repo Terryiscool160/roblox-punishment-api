@@ -7,8 +7,10 @@ you can find current endpoints [here](ENDPOINTS.md) alongside the current [datab
 ## Running Locally
 
 1. you can install rust by following the [official guide](https://www.rust-lang.org/tools/install)
-2. execute `cargo run`
-3. the server will start (by default) on `http:://127.0.0.1:8080/` if you are using the default .env
+2. run `cargo install diesel_cli`
+3. run `diesel migration run` to setup the database
+4. execute `cargo run`
+5. the server will start (by default) on `http:://127.0.0.1:8080/` if you are using the default .env
 
 # contributing
 
