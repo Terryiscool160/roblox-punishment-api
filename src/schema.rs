@@ -6,7 +6,6 @@ diesel::table! {
         added -> Timestamp,
         updated -> Timestamp,
         unbanned_at -> BigInt,
-        username -> Text,
         reason -> Text,
     }
 }

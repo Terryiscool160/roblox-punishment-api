@@ -3,7 +3,7 @@
 ## punishing a user:
 
 ```bash
-curl -d '{"roblox_id": 1, "reason":"chat bypassing", "username":"ROBLOX", "unbanned_at"}' -H "Content-type: application/json" -X POST http://127.0.0.1:8080/Punish
+curl -d '{"roblox_id": 1, "reason":"chat bypassing", "unbanned_at": 0}' -H "Content-type: application/json" -X POST http://127.0.0.1:8080/Punish
 ```
 
 example response:
@@ -28,7 +28,6 @@ example responses:
   "added": "2024-03-10T19:08:52.174234",
   "updated": "2024-03-10T19:08:52.174693",
   "unbanned_at": 1710097709,
-  "username": "unknodsdfsdwn",
   "reason": "smdsfsdells"
 }
 ```
@@ -68,7 +67,6 @@ example response:
     "added": "2024-03-10T19:08:52.174234",
     "updated": "2024-03-10T19:08:52.174693",
     "unbanned_at": 1710097709,
-    "username": "unknodsdfsdwn",
     "reason": "smdsfsdells"
   }
 ]

@@ -36,7 +36,6 @@ fn create_ban(
             added: chrono::Local::now().naive_local(),
             updated: chrono::Local::now().naive_local(),
             unbanned_at: json.unbanned_at.to_owned(),
-            username: json.username.to_owned(),
             reason: json.reason.to_owned(),
         })
         .execute(connection)?;
@@ -172,7 +171,7 @@ async fn auth(
     req: actix_web::dev::ServiceRequest,
     next: Next<impl MessageBody + 'static>,
 ) -> Result<actix_web::dev::ServiceResponse<impl MessageBody + 'static>, Error> {
-    let Some(token) = req.request().headers().get("Authorization") else {
+    let Some(token) = req.request().headers().get("authorization") else {
         return Err(actix_web::error::ErrorUnauthorized("Invalid token"));
     };
 
