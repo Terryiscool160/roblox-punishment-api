@@ -48,8 +48,6 @@ async fn set_punishment(
     pool: web::Data<Pool<ConnectionManager<SqliteConnection>>>,
     data: web::Json<models::NewBanJSON>,
 ) -> Result<HttpResponse, CustomError> {
-    log::info!("{:?}", &data);
-
     let result = web::block(move || -> Result<(), DbError> {
         let mut connection = pool.get()?;
 
