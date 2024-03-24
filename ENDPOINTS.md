@@ -3,7 +3,7 @@
 ## punishing a user:
 
 ```bash
-curl -d '{"roblox_id": 1, "reason":"chat bypassing", "unbanned_at": 0}' -H "Content-type: application/json" -X POST http://127.0.0.1:8080/Punish
+curl -d '{"roblox_id": 1, "duration": "1 week", "reason":"chat bypassing", "unbanned_at": 0, "moderator":"terryiscool160"}' -H "Content-type: application/json" -H "Authorization: yourmom" -X POST http://127.0.0.1:8080/Punish
 ```
 
 example response:
@@ -35,6 +35,42 @@ example responses:
 ```json
 {
   "message": "Not found within database"
+}
+```
+
+## getting a user's past punishments:
+
+```bash
+curl -H "Authorization: yourmom" -X GET http://127.0.0.1:8080/Logs/{userId}
+```
+
+example response:
+
+```json
+[
+  {
+    "roblox_id": 1,
+    "log_id": "1wheM",
+    "added": "2024-03-24T14:25:15.777033",
+    "unbanned_at": 0,
+    "duration": "1 week",
+    "reason": "chat bypassing",
+    "moderator": "terryiscool160"
+  }
+]
+```
+
+## removing a user's past punishments:
+
+```bash
+curl -H "Authorization: yourmom" -X POST http://127.0.0.1:8080/RemoveLog/{log_id}
+```
+
+example response:
+
+```json
+{
+  "success": true
 }
 ```
 

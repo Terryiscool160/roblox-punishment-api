@@ -1099,6 +1099,7 @@ dependencies = [
  "dotenv",
  "env_logger",
  "log",
+ "rand",
  "serde",
 ]
 

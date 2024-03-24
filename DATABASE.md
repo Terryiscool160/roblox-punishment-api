@@ -18,3 +18,27 @@ CREATE TABLE IF NOT EXISTS bans (
   reason VARCHAR(1000) NOT NULL
 );
 ```
+
+### Log Storage
+
+- `roblox_id`: BIGINT, NOT NULL
+- `log_id`: VARCHAR(100), NOT NULL, UNIQUE
+  - Primary key
+- `added`: TIMESTAMP, NOT NULL
+  - Default: `CURRENT_TIMESTAMP`
+- `unbanned_at`: BIGINT, NOT NULL
+- `duration`: VARCHAR(1000), NOT NULL
+- `moderator`: VARCHAR(1000), NOT NULL
+- `reason`: VARCHAR(1000), NOT NULL
+
+```sql
+CREATE TABLE IF NOT EXISTS logs (
+  roblox_id BIGINT NOT NULL,
+  log_id VARCHAR(100) UNIQUE PRIMARY KEY NOT NULL,
+  added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  unbanned_at BIGINT NOT NULL,
+  duration VARCHAR(1000) NOT NULL,
+  moderator VARCHAR(100) NOT NULL,
+  reason VARCHAR(1000) NOT NULL
+)
+```

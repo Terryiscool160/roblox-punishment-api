@@ -14,3 +14,4 @@ log = "0.4.20"
 dotenv = "0.15.0"
 chrono = { version = "0.4.31", features = ["serde"] }
 actix-web-lab = "0.20.1"
+rand = "0.8.5"
