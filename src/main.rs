@@ -253,8 +253,6 @@ async fn get_logs(
     })
     .await;
 
-    println!("{:?}", logs);
-
     match logs {
         Ok(Ok(json)) => Ok(HttpResponse::Ok().json(json)),
         Err(err) => {
