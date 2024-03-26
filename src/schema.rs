@@ -8,6 +8,7 @@ diesel::table! {
         countdown_start -> BigInt,
         unbanned_at -> BigInt,
         reason -> Text,
+        log_id -> Text,
     }
 }
 

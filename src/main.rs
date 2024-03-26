@@ -30,6 +30,7 @@ fn connect_db() -> Pool<ConnectionManager<SqliteConnection>> {
 fn create_ban(
     connection: &mut SqliteConnection,
     json: &web::Json<models::NewBanJSON>,
+    sent_log_id: String,
 ) -> Result<(), DbError> {
     use schema::bans::dsl::*;
 
@@ -37,10 +38,11 @@ fn create_ban(
         .values(models::Ban {
             roblox_id: json.roblox_id.to_owned(),
             added: chrono::Local::now().naive_local(),
-            countdown_start: 0,
             updated: chrono::Local::now().naive_local(),
             unbanned_at: json.unbanned_at.to_owned(),
             reason: json.reason.to_owned(),
+            log_id: sent_log_id.to_owned(),
+            countdown_start: 0,
         })
         .execute(connection)?;
 
@@ -50,7 +52,7 @@ fn create_ban(
 fn log_ban(
     connection: &mut SqliteConnection,
     json: &web::Json<models::NewBanJSON>,
-) -> Result<(), DbError> {
+) -> Result<String, DbError> {
     use schema::logs::dsl::*;
 
     let generated_log_id: String = thread_rng()
@@ -62,7 +64,7 @@ fn log_ban(
     diesel::insert_into(logs)
         .values(models::Log {
             roblox_id: json.roblox_id.to_owned(),
-            log_id: generated_log_id,
+            log_id: generated_log_id.clone(),
             added: chrono::Local::now().naive_local(),
             unbanned_at: json.unbanned_at.to_owned(),
             duration: json.duration.to_owned(),
@@ -71,7 +73,7 @@ fn log_ban(
         })
         .execute(connection)?;
 
-    Ok(())
+    Ok(generated_log_id)
 }
 
 #[post("/Punish")]
@@ -82,8 +84,8 @@ async fn set_punishment(
     let result = web::block(move || -> Result<(), DbError> {
         let mut connection = pool.get()?;
 
-        create_ban(&mut connection, &data)?;
-        log_ban(&mut connection, &data)
+        let log_id = log_ban(&mut connection, &data)?;
+        create_ban(&mut connection, &data, log_id)
     })
     .await;
 

@@ -8,6 +8,7 @@
   - Default: `CURRENT_TIMESTAMP`
 - `unbanned_at`: BIGINT, NOT NULL - this should be os.time() + ban duration in seconds
 - `countdown_start`: BIGINT, NOT NULL, DEFAULT 0 - should be set to os.time() + duration when the player joins the game
+- `log_id`: VARCHAR(100), NOT NULL, UNIQUE
 - `reason`: VARCHAT(1000), NOT NULL
 
 ```sql
@@ -16,6 +17,7 @@ CREATE TABLE IF NOT EXISTS bans (
   added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   countdown_start BIGINT DEFAULT 0 NOT NULL,
+  log_id VARCHAR(100) UNIQUE NOT NULL,
   unbanned_at BIGINT NOT NULL,
   reason VARCHAR(1000) NOT NULL
 );

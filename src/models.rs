@@ -11,6 +11,7 @@ pub struct Ban {
     pub countdown_start: i64,
     pub unbanned_at: i64,
     pub reason: String,
+    pub log_id: String,
 }
 
 #[derive(Debug, Queryable, Serialize, Deserialize, Insertable)]
