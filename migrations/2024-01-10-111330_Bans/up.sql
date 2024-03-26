@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS bans (
   countdown_start BIGINT DEFAULT 0 NOT NULL,
   unbanned_at BIGINT NOT NULL,
   reason VARCHAR(1000) NOT NULL,
-  log_id VARCHAR(100) UNIQUE NOT NULL
+  log_id VARCHAR(100) DEFAULT ""
 )
