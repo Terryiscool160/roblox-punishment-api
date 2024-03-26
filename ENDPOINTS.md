@@ -14,6 +14,20 @@ example response:
 }
 ```
 
+## updating the countdown for a user's punishment:
+
+```bash
+curl -d '{"roblox_id": 1, "countdown_start": 1}' -H "Content-type: application/json" -H "Authorization: yourmom" -X POST http://127.0.0.1:8080/StartCountdown
+```
+
+example response:
+
+```json
+{
+  "success": true
+}
+```
+
 ## getting a user's punishment:
 
 ```bash
@@ -60,10 +74,24 @@ example response:
 ]
 ```
 
-## removing a user's past punishments:
+## removing a user's past punishment:
 
 ```bash
 curl -H "Authorization: yourmom" -X POST http://127.0.0.1:8080/RemoveLog/{log_id}
+```
+
+example response:
+
+```json
+{
+  "success": true
+}
+```
+
+## removing a user's past punishments:
+
+```bash
+curl -H "Authorization: yourmom" -X POST http://127.0.0.1:8080/RemoveLogs/{userId}
 ```
 
 example response:

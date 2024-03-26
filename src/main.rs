@@ -37,6 +37,7 @@ fn create_ban(
         .values(models::Ban {
             roblox_id: json.roblox_id.to_owned(),
             added: chrono::Local::now().naive_local(),
+            countdown_start: 0,
             updated: chrono::Local::now().naive_local(),
             unbanned_at: json.unbanned_at.to_owned(),
             reason: json.reason.to_owned(),
@@ -133,6 +134,37 @@ async fn appeal_punishment(
     }
 }
 
+#[post("/StartCountdown")]
+async fn begin_countdown(
+    pool: web::Data<Pool<ConnectionManager<SqliteConnection>>>,
+    data: web::Json<models::StartCountdownJSON>,
+) -> Result<HttpResponse, CustomError> {
+    let result = web::block(move || -> Result<(), DbError> {
+        let mut connection = pool.get()?;
+
+        use crate::schema::bans::dsl::*;
+
+        diesel::update(bans.filter(roblox_id.eq(data.roblox_id)))
+            .set(countdown_start.eq(data.countdown_start))
+            .execute(&mut connection)?;
+
+        Ok(())
+    })
+    .await;
+
+    match result {
+        Ok(Ok(_)) => Ok(HttpResponse::Ok().json(models::SuccessResponse { success: true })),
+        Err(err) => {
+            log::error!("DB Error! {:?}", err); // for debugging
+            Err(CustomError::DbError)
+        }
+        Ok(Err(err)) => {
+            log::error!("DB Error! {:?}", err);
+            Err(CustomError::DbError)
+        }
+    }
+}
+
 #[post("/RemoveLog/{log_id}")]
 async fn remove_log(
     pool: web::Data<Pool<ConnectionManager<SqliteConnection>>>,
@@ -149,6 +181,40 @@ async fn remove_log(
         use crate::schema::logs::dsl::*;
 
         diesel::delete(logs.filter(log_id.eq(sent_log_id))).execute(&mut connection)?;
+
+        Ok(())
+    })
+    .await;
+
+    match result {
+        Ok(Ok(_)) => Ok(HttpResponse::Ok().json(models::SuccessResponse { success: true })),
+        Err(err) => {
+            log::error!("DB Error! {:?}", err); // for debugging
+            Err(CustomError::DbError)
+        }
+        Ok(Err(err)) => {
+            log::error!("DB Error! {:?}", err);
+            Err(CustomError::DbError)
+        }
+    }
+}
+
+#[post("/RemoveLogs/{userId}")]
+async fn remove_logs(
+    pool: web::Data<Pool<ConnectionManager<SqliteConnection>>>,
+    user_id: web::Path<String>,
+) -> Result<HttpResponse, CustomError> {
+    let sent_id: i64 = match user_id.into_inner().parse::<i64>() {
+        Ok(value) => value,
+        Err(_) => return Err(CustomError::Validation),
+    };
+
+    let result = web::block(move || -> Result<(), DbError> {
+        let mut connection = pool.get()?;
+
+        use crate::schema::logs::dsl::*;
+
+        diesel::delete(logs.filter(roblox_id.eq(sent_id))).execute(&mut connection)?;
 
         Ok(())
     })
@@ -306,8 +372,10 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(db.clone()))
             .wrap(Logger::default())
             .wrap(from_fn(auth))
+            .service(begin_countdown)
             .service(get_all_punishments)
             .service(remove_log)
+            .service(remove_logs)
             .service(get_logs)
             .service(get_punishment)
             .service(appeal_punishment)

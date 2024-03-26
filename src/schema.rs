@@ -5,6 +5,7 @@ diesel::table! {
         roblox_id -> BigInt,
         added -> Timestamp,
         updated -> Timestamp,
+        countdown_start -> BigInt,
         unbanned_at -> BigInt,
         reason -> Text,
     }

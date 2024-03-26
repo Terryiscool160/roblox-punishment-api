@@ -8,6 +8,7 @@ pub struct Ban {
     pub roblox_id: i64,
     pub added: NaiveDateTime,
     pub updated: NaiveDateTime,
+    pub countdown_start: i64,
     pub unbanned_at: i64,
     pub reason: String,
 }
@@ -41,4 +42,10 @@ pub struct NewBanJSON {
     pub reason: String,
     pub moderator: String,
     pub duration: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct StartCountdownJSON {
+    pub roblox_id: i64,
+    pub countdown_start: i64,
 }
