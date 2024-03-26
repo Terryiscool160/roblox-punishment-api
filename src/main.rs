@@ -365,6 +365,11 @@ async fn main() -> std::io::Result<()> {
         .parse::<u16>()
         .expect("Could not parse PORT as a u16?");
 
+    let listen_addr = std::env::var("LISTEN_ADDR")
+        .expect("LISTEN_ADDR should be set")
+        .parse::<String>()
+        .expect("Could not parse LISTEN_ADDR as a String?");
+
     let db = connect_db();
 
     HttpServer::new(move || {
@@ -381,7 +386,7 @@ async fn main() -> std::io::Result<()> {
             .service(appeal_punishment)
             .service(set_punishment)
     })
-    .bind(("127.0.0.1", port))?
+    .bind((listen_addr, port))?
     .run()
     .await
 }
