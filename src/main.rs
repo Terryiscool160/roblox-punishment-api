@@ -55,7 +55,7 @@ fn log_ban(
 
     let generated_log_id: String = thread_rng()
         .sample_iter(&Alphanumeric)
-        .take(5)
+        .take(6)
         .map(char::from)
         .collect();
 
