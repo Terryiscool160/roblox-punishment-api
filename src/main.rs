@@ -91,14 +91,8 @@ async fn set_punishment(
 
     match result {
         Ok(Ok(_)) => Ok(HttpResponse::Ok().json(models::SuccessResponse { success: true })),
-        Ok(Err(err)) => {
-            log::error!("DB Error! {:?}", err);
-            Err(CustomError::DbError)
-        }
-        Err(err) => {
-            log::error!("DB Error! {:?}", err);
-            Err(CustomError::DbError)
-        }
+        Err(err) => Err(CustomError::DatabaseError(err.to_string())),
+        Ok(Err(err)) => Err(CustomError::DatabaseError(err.to_string())),
     }
 }
 
@@ -125,14 +119,11 @@ async fn appeal_punishment(
 
     match result {
         Ok(Ok(_)) => Ok(HttpResponse::Ok().json(models::SuccessResponse { success: true })),
-        Err(err) => {
-            log::error!("DB Error! {:?}", err); // for debugging
-            Err(CustomError::DbError)
-        }
-        Ok(Err(err)) => {
-            log::error!("DB Error! {:?}", err);
-            Err(CustomError::DbError)
-        }
+        Err(err) => Err(CustomError::DatabaseError(err.to_string())),
+        Ok(Err(err)) => match err.downcast_ref::<diesel::result::Error>() {
+            Some(NotFound) => Err(CustomError::NotFound),
+            _ => Err(CustomError::DatabaseError(err.to_string())),
+        },
     }
 }
 
@@ -156,14 +147,11 @@ async fn begin_countdown(
 
     match result {
         Ok(Ok(_)) => Ok(HttpResponse::Ok().json(models::SuccessResponse { success: true })),
-        Err(err) => {
-            log::error!("DB Error! {:?}", err); // for debugging
-            Err(CustomError::DbError)
-        }
-        Ok(Err(err)) => {
-            log::error!("DB Error! {:?}", err);
-            Err(CustomError::DbError)
-        }
+        Err(err) => Err(CustomError::DatabaseError(err.to_string())),
+        Ok(Err(err)) => match err.downcast_ref::<diesel::result::Error>() {
+            Some(NotFound) => Err(CustomError::NotFound),
+            _ => Err(CustomError::DatabaseError(err.to_string())),
+        },
     }
 }
 
@@ -190,14 +178,8 @@ async fn remove_log(
 
     match result {
         Ok(Ok(_)) => Ok(HttpResponse::Ok().json(models::SuccessResponse { success: true })),
-        Err(err) => {
-            log::error!("DB Error! {:?}", err); // for debugging
-            Err(CustomError::DbError)
-        }
-        Ok(Err(err)) => {
-            log::error!("DB Error! {:?}", err);
-            Err(CustomError::DbError)
-        }
+        Err(err) => Err(CustomError::DatabaseError(err.to_string())),
+        Ok(Err(err)) => Err(CustomError::DatabaseError(err.to_string())),
     }
 }
 
@@ -224,14 +206,8 @@ async fn remove_logs(
 
     match result {
         Ok(Ok(_)) => Ok(HttpResponse::Ok().json(models::SuccessResponse { success: true })),
-        Err(err) => {
-            log::error!("DB Error! {:?}", err); // for debugging
-            Err(CustomError::DbError)
-        }
-        Ok(Err(err)) => {
-            log::error!("DB Error! {:?}", err);
-            Err(CustomError::DbError)
-        }
+        Err(err) => Err(CustomError::DatabaseError(err.to_string())),
+        Ok(Err(err)) => Err(CustomError::DatabaseError(err.to_string())),
     }
 }
 
@@ -252,10 +228,8 @@ async fn get_all_punishments(
 
     match result {
         Ok(Ok(json)) => Ok(HttpResponse::Ok().json(json)),
-        _ => {
-            log::error!("DB Error! {:?}", result);
-            Err(CustomError::DbError)
-        }
+        Err(err) => Err(CustomError::DatabaseError(err.to_string())),
+        Ok(Err(err)) => Err(CustomError::DatabaseError(err.to_string())),
     }
 }
 
@@ -269,7 +243,7 @@ async fn get_punishment(
         Err(_) => return Err(CustomError::Validation),
     };
 
-    let ban = web::block(move || -> Result<models::Ban, DbError> {
+    let result = web::block(move || -> Result<models::Ban, DbError> {
         let mut connection = pool.get()?;
 
         use crate::schema::bans::dsl::*;
@@ -282,18 +256,12 @@ async fn get_punishment(
     })
     .await;
 
-    match ban {
+    match result {
         Ok(Ok(json)) => Ok(HttpResponse::Ok().json(json)),
-        Err(err) => {
-            log::error!("DB Error! {:?}", err);
-            Err(CustomError::DbError)
-        }
+        Err(err) => Err(CustomError::DatabaseError(err.to_string())),
         Ok(Err(err)) => match err.downcast_ref::<diesel::result::Error>() {
             Some(NotFound) => Err(CustomError::NotFound),
-            _ => {
-                log::error!("DB Error! {:?}", err);
-                Err(CustomError::DbError)
-            }
+            _ => Err(CustomError::DatabaseError(err.to_string())),
         },
     }
 }
@@ -308,7 +276,7 @@ async fn get_logs(
         Err(_) => return Err(CustomError::Validation),
     };
 
-    let logs = web::block(move || -> Result<Vec<models::Log>, DbError> {
+    let result = web::block(move || -> Result<Vec<models::Log>, DbError> {
         let mut connection = pool.get()?;
 
         use crate::schema::logs::dsl::*;
@@ -321,18 +289,12 @@ async fn get_logs(
     })
     .await;
 
-    match logs {
+    match result {
         Ok(Ok(json)) => Ok(HttpResponse::Ok().json(json)),
-        Err(err) => {
-            log::error!("DB Error! {:?}", err);
-            Err(CustomError::DbError)
-        }
+        Err(err) => Err(CustomError::DatabaseError(err.to_string())),
         Ok(Err(err)) => match err.downcast_ref::<diesel::result::Error>() {
             Some(NotFound) => Err(CustomError::NotFound),
-            _ => {
-                log::error!("DB Error! {:?}", err);
-                Err(CustomError::DbError)
-            }
+            _ => Err(CustomError::DatabaseError(err.to_string())),
         },
     }
 }

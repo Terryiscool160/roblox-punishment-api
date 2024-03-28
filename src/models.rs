@@ -22,8 +22,8 @@ pub struct Log {
     pub added: NaiveDateTime,
     pub unbanned_at: i64,
     pub duration: String,
-    pub reason: String,
     pub moderator: String,
+    pub reason: String,
 }
 
 #[derive(Debug, Serialize)]
