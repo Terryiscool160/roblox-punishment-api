@@ -9,7 +9,7 @@ pub enum CustomError {
     //Duplication,
     Validation,
     NotFound,
-    DbError,
+    DbError(Err),
 }
 
 #[derive(Serialize)]
@@ -47,6 +47,12 @@ impl ResponseError for CustomError {
         HttpResponse::build(self.status_code()).json(ErrorResponse {
             message: self.name(),
         })
+    }
+}
+
+impl From<diesel::result::Error> for Error {
+    fn from(error: diesel::result::Error) -> Self {
+        Error::DatabaseError(error)
     }
 }
 
