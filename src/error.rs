@@ -25,7 +25,10 @@ impl std::fmt::Display for CustomError {
             Self::DatabaseError(error) => format!("Database error! {error}"),
         };
 
-        log::error!("{}", str);
+        match self {
+            Self::DatabaseError(error) => log::error!("{}", error),
+            _ => {}
+        }
 
         write!(f, "{}", str)
     }
